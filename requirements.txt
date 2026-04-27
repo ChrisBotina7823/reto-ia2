@@ -1,0 +1,10 @@
+fastmcp
+langgraph
+langchain-google-genai
+langchain-core
+google-generativeai
+pandas
+pyarrow
+httpx
+python-dotenv
+pytest

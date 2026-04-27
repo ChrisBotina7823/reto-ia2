@@ -1,0 +1,5 @@
+.venv/
+.env
+__pycache__/
+*.pyc
+eda/reporte_eda.txt
