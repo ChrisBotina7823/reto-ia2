@@ -3,3 +3,4 @@
 __pycache__/
 *.pyc
 eda/reporte_eda.txt
+test_output.txt

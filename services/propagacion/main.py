@@ -73,9 +73,9 @@ def analizar_propagacion(post_id: str) -> dict:
         "estrategia_usada": PROPAGACION_STRATEGY,
     }
 
-    if "liked" in df.columns:
-        likes_orig = len(post.get("liked", [])) if isinstance(post.get("liked", None), list) else 0
-        likes_resp = int(respuestas["liked"].apply(lambda value: len(value) if isinstance(value, list) else 0).sum()) if not respuestas.empty else 0
+    if "likes" in df.columns:
+        likes_orig = len(post.get("likes", [])) if isinstance(post.get("likes", None), list) else 0
+        likes_resp = int(respuestas["likes"].apply(lambda value: len(value) if isinstance(value, list) else 0).sum()) if not respuestas.empty else 0
         resultado["likes_acumulados"] = int(likes_orig + likes_resp)
 
     return resultado

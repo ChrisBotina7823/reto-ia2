@@ -193,15 +193,19 @@ def chat():
             msg = str(exc)
             if "RESOURCE_EXHAUSTED" in msg or "429" in msg:
                 print(
-                    "\n[Error Gemini 429] Te quedaste sin cuota/rate-limit. "
-                    "Para forzar modo degradado, borra/comenta `GOOGLE_API_KEY` en `.env` y reinicia."
+                    "\n[Error Gemini 429] Cuota/rate-limit alcanzado. "
+                    "Espera un momento y reintenta, o configura modo degradado borrando GOOGLE_API_KEY."
                 )
+                continue
             elif "API_KEY_INVALID" in msg or "API key not valid" in msg or ("INVALID_ARGUMENT" in msg and "400" in msg):
                 print(
-                    "\n[Error Gemini 400] `GOOGLE_API_KEY` inválida. "
-                    "Verifica que pegaste la key exacta en `.env`."
+                    "\n[Error Gemini 400] GOOGLE_API_KEY invalida. "
+                    "Verifica que pegaste la key exacta en .env."
                 )
-            raise
+                break
+            else:
+                print(f"\n[Error inesperado] {msg}")
+                raise
 
 
 if __name__ == "__main__":
