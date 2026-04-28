@@ -6,6 +6,7 @@ Output:   eda/reporte_eda.txt
 """
 
 import os
+import sys
 from pathlib import Path
 
 import numpy as np
@@ -17,10 +18,19 @@ OUTPUT_PATH = Path("eda/reporte_eda.txt")
 
 lines: list[str] = []
 
+# Evita fallos en consola Windows (cp1252) al imprimir emojis/símbolos.
+try:
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+except Exception:
+    pass
+
 
 def log(msg: str = "") -> None:
     lines.append(str(msg))
-    print(msg)
+    try:
+        print(msg)
+    except UnicodeEncodeError:
+        print(str(msg).encode("utf-8", "replace").decode("utf-8"))
 
 
 def sep() -> None:

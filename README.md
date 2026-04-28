@@ -1,4 +1,4 @@
-# Reto ICESI: Agentes Conversacionales y Análisis de Conversaciones Digitales
+# Reto ICESI: Agentes Conversacionales y Análisis de Conversaciones Digitales.
 
 Implementación en Python 3.11+ de un sistema compuesto por tres servicios MCP, un agente conversacional orquestado con LangGraph y un flujo de análisis sobre un dataset de conversaciones digitales.
 
@@ -55,27 +55,51 @@ El agente vive en `agent/chat.py` y está respaldado por un grafo LangGraph defi
 1. Crea y activa el entorno virtual.
 
 ```powershell
-py -3.14 -m venv .venv
+py -3.11 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 ```
 
 2. Instala dependencias.
 
 ```powershell
-pip install fastmcp langgraph langchain-google-genai langchain-core google-generativeai pandas pyarrow httpx python-dotenv pytest
+pip install -r requirements.txt
 ```
 
-3. Verifica el archivo `.env` en la raíz.
+3. Crea tu archivo `.env` (no se sube a git).
+
+Crea un archivo `.env` en la raíz con, por ejemplo:
+
+```env
+GOOGLE_API_KEY=TU_KEY
+GEMINI_MODEL=gemini-2.5-flash
+GEMINI_MODEL_FALLBACKS=gemini-2.0-flash,gemini-1.5-flash,gemini-1.5-pro
+DATASET_PATH=./data/Reto_data_20251023_122206.parquet
+MCP_EMOCIONES_URL=http://localhost:8001
+MCP_METRICAS_URL=http://localhost:8002
+MCP_PROPAGACION_URL=http://localhost:8003
+```
+
+4. Verifica el archivo `.env` en la raíz.
 
 El proyecto usa estas variables:
 
 - `GOOGLE_API_KEY`: clave de Gemini. Si no está presente, el servicio de emociones usa un fallback local.
-- `GEMINI_MODEL`: modelo principal para llamadas a Gemini. Recomendado: `gemini-2.0-flash`.
-- `GEMINI_MODEL_FALLBACKS`: modelos alternativos separados por coma si el principal no existe en tu API, por ejemplo: `gemini-1.5-flash,gemini-1.5-pro`.
+- `GEMINI_MODEL`: modelo principal para llamadas a Gemini. Recomendado: `gemini-2.5-flash`.
+- `GEMINI_MODEL_FALLBACKS`: modelos alternativos separados por coma si el principal no existe en tu API, por ejemplo: `gemini-2.0-flash,gemini-1.5-flash,gemini-1.5-pro`.
 - `DATASET_PATH`: ruta al parquet del dataset.
 - `MCP_EMOCIONES_URL`: URL base del servicio de emociones.
 - `MCP_METRICAS_URL`: URL base del servicio de métricas.
 - `MCP_PROPAGACION_URL`: URL base del servicio de propagación.
+
+## Ejecutar demo con un comando (recomendado)
+
+El script `run_demo.ps1` levanta todo (y opcionalmente libera puertos) en Windows:
+
+```powershell
+.\run_demo.ps1 -NoInstall -KillPorts
+```
+
+- Si quieres probar **modo degradado**, comenta o borra `GOOGLE_API_KEY` en `.env` y reinicia.
 
 ## Dataset
 
@@ -155,6 +179,19 @@ Antes de abrir el chat, asegúrate de que los tres servicios estén corriendo.
 ```
 
 El agente mantiene el historial de la conversación y decide qué herramienta llamar según la pregunta del usuario.
+
+### Nota sobre `GOOGLE_API_KEY` y "modo degradado"
+
+- **Con `GOOGLE_API_KEY` (o `GEMINI_API_KEY`) configurada**: el agente usa Gemini (LangGraph + tool-calling) para decidir qué herramienta llamar.
+- **Sin API key**: el chat entra automáticamente en **modo degradado** (lo anuncia en consola) y enruta la intención con reglas simples, llamando directamente a los MCP. Esto evita que la demo falle, pero reduce la “inteligencia” del agente frente a preguntas muy abiertas.
+
+### Verificación rápida de Gemini (opcional)
+
+Si ya pegaste tu `GOOGLE_API_KEY` en `.env`, este comando debería imprimir un texto (si falla, verás un error de auth/cuota):
+
+```powershell
+.\.venv\Scripts\python.exe -c "from dotenv import load_dotenv; load_dotenv(); from shared.gemini_client import call_gemini; print(call_gemini('Responde con la palabra: OK'))"
+```
 
 ## Cómo correr las pruebas
 
