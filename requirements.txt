@@ -5,6 +5,7 @@ langchain-core
 google-generativeai
 pandas
 pyarrow
+numpy
 httpx
 python-dotenv
 pytest

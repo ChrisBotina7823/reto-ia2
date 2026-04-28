@@ -38,10 +38,12 @@ Sin explicaciones. Sin markdown. Solo el JSON."""
 
 
 def _parse_json(raw: str) -> dict:
+    cleaned = re.sub(r"^```(?:json)?\s*", "", raw.strip(), flags=re.IGNORECASE)
+    cleaned = re.sub(r"\s*```$", "", cleaned.strip())
     try:
-        return json.loads(raw)
+        return json.loads(cleaned)
     except json.JSONDecodeError:
-        match = re.search(r"\{.*\}", raw, re.DOTALL)
+        match = re.search(r"\{.*\}", cleaned, re.DOTALL)
         if match:
             return json.loads(match.group())
         raise ValueError(f"Respuesta no parseable: {raw[:200]}")
@@ -101,7 +103,9 @@ def analizar_emociones_por_id(post_id: str) -> dict:
     post = get_post(post_id)
     if post is None:
         return {"error": f"Post '{post_id}' no encontrado en el dataset."}
-    texto = str(post.get("text", ""))
+    texto = str(post.get("text", "")).strip()
+    if not texto:
+        return {"post_id": post_id, "texto": "", **_fallback_emotions("")}
     resultado = analizar_emociones(texto)
     return {"post_id": post_id, "texto": texto[:200], **resultado}
 

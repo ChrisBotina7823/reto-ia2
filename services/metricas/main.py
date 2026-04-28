@@ -49,8 +49,8 @@ def _engagement(df: pd.DataFrame) -> pd.Series:
         if float(engagement_rate.abs().sum()) > 0:
             score += engagement_rate
 
-    if "liked" in df.columns:
-        score += df["liked"].apply(_parse_like_count)
+    if "likes" in df.columns:
+        score += df["likes"].apply(_parse_like_count)
 
     return score
 
@@ -85,8 +85,8 @@ def post_mayor_impacto() -> dict:
         "texto": str(top.get("text", ""))[:300],
         "engagement_total": float(top["_engagement"]),
     }
-    if "liked" in df.columns:
-        result["likes"] = int(_parse_like_count(top.get("liked", None)))
+    if "likes" in df.columns:
+        result["likes"] = int(_parse_like_count(top.get("likes", None)))
     if "timestamp" in df.columns:
         result["timestamp"] = str(top.get("timestamp", ""))
     if "influenceScore" in df.columns:
@@ -106,8 +106,8 @@ def metricas_generales() -> dict:
         "engagement_promedio": round(float(df["_engagement"].mean()), 2),
         "engagement_maximo": int(df["_engagement"].max()),
     }
-    if "liked" in df.columns:
-        result["total_likes"] = int(df["liked"].apply(_parse_like_count).sum())
+    if "likes" in df.columns:
+        result["total_likes"] = int(df["likes"].apply(_parse_like_count).sum())
     if "influenceScore" in df.columns:
         result["total_influence_score"] = float(pd.to_numeric(df["influenceScore"], errors="coerce").fillna(0).sum())
     return result

@@ -74,3 +74,14 @@ def test_propagacion_id_real():
     data = call_tool(BASE_PROPAGACION, "analizar_propagacion", {"post_id": post_id})
     assert "alcance" in data
     assert "usuarios_alcanzados" in data
+
+
+def test_emociones_por_id_real():
+    from shared.data_loader import load_dataset
+
+    df = load_dataset()
+    post_id = str(df["post_id"].iloc[0])
+
+    data = call_tool(BASE_EMOCIONES, "analizar_emociones_por_id", {"post_id": post_id})
+    assert "post_id" in data
+    assert "emocion_dominante" in data

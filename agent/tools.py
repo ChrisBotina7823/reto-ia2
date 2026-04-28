@@ -18,42 +18,45 @@ def _call_mcp(base_url: str, tool_name: str, payload: dict):
                 return response_payload["result"]
             return response_payload
 
-    return asyncio.run(_run())
+    try:
+        return asyncio.run(_run())
+    except Exception as exc:
+        return {"error": f"Error al llamar {base_url}/{tool_name}: {str(exc)}"}
 
 
 @tool
 def analizar_emociones(texto: str) -> dict:
-    """Analiza las emociones presentes en un texto de red social."""
+    """Analiza las emociones (alegria, tristeza, enojo, miedo, sorpresa, disgusto) de un texto de red social. Usar cuando el usuario proporcione texto directamente para analizar."""
     return _call_mcp(MCP_EMOCIONES, "analizar_emociones", {"texto": texto})
 
 
 @tool
 def analizar_emociones_por_id(post_id: str) -> dict:
-    """Analiza las emociones de un post especifico usando su ID."""
+    """Analiza las emociones de un post especifico del dataset usando su ID. Usar cuando el usuario mencione un ID de post y quiera saber el estado emocional de ese post."""
     return _call_mcp(MCP_EMOCIONES, "analizar_emociones_por_id", {"post_id": post_id})
 
 
 @tool
 def actores_influyentes(top_n: int = 10) -> list:
-    """Identifica los usuarios mas influyentes por engagement total."""
+    """Identifica los usuarios con mayor engagement total. Usar cuando pregunten quienes son los mas influyentes, activos, o con mayor impacto en la conversacion."""
     return _call_mcp(MCP_METRICAS, "actores_influyentes", {"top_n": top_n})
 
 
 @tool
 def post_mayor_impacto() -> dict:
-    """Encuentra el post con mayor engagement o viralidad en el dataset."""
+    """Retorna el post con mayor engagement o viralidad. Usar cuando pregunten por el post mas viral, con mas impacto, repercusion o el mas popular."""
     return _call_mcp(MCP_METRICAS, "post_mayor_impacto", {})
 
 
 @tool
 def metricas_generales() -> dict:
-    """Obtiene estadisticas globales de la conversacion."""
+    """Devuelve estadisticas globales: total de posts, usuarios, engagement promedio y maximo. Usar para preguntas generales sobre el volumen o dimension de la conversacion."""
     return _call_mcp(MCP_METRICAS, "metricas_generales", {})
 
 
 @tool
 def analizar_propagacion(post_id: str) -> dict:
-    """Analiza como se propago un mensaje especifico en la red."""
+    """Analiza como se propago un mensaje especifico en la red: alcance, usuarios alcanzados y velocidad de la primera respuesta. Requiere un post_id exacto."""
     return _call_mcp(MCP_PROPAGACION, "analizar_propagacion", {"post_id": post_id})
 
 
